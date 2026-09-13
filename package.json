@@ -7,6 +7,7 @@
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "client": "vite",
     "server": "tsx watch server/index.ts",
+    "start": "tsx server/index.ts",
     "seed": "tsx server/seedTestOrder.ts",
     "build": "tsc && vite build",
     "preview": "vite preview"
