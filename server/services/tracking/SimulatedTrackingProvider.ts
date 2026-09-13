@@ -21,7 +21,7 @@ export class SimulatedTrackingProvider implements TrackingProvider {
   }
 
   public getTrackingTimeline(order: OrderInputData): TrackingTimelineResult {
-    // 1. Determine base start date: tracking generation time (tracking_created_at) if available, otherwise order_time
+    // 1. Determine base start date (prefer tracking_created_at if generated, fallback to order_time)
     const rawTime = order.tracking_created_at || order.order_time || order.created_at || order.createdAt;
     const baseDate = rawTime ? new Date(rawTime) : new Date();
     
@@ -90,8 +90,11 @@ export class SimulatedTrackingProvider implements TrackingProvider {
       },
     ];
 
-    // 3. Calculate elapsed days from baseDate
-    const diffTimeMs = now.getTime() - validBaseDate.getTime();
+    // 3. Calculate calendar day difference between base date and current date
+    const startOfBaseDate = new Date(validBaseDate.getFullYear(), validBaseDate.getMonth(), validBaseDate.getDate());
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    
+    const diffTimeMs = startOfToday.getTime() - startOfBaseDate.getTime();
     const elapsedDays = Math.floor(diffTimeMs / (1000 * 60 * 60 * 24));
     
     // Clamp active index between 0 and 7
