@@ -6,8 +6,8 @@ import { Input } from '../../components/ui/Input';
 import { loginAdmin } from '../../services/api';
 
 export const AdminLoginPage: React.FC = () => {
-  const [email, setEmail] = useState('admin@example.com');
-  const [password, setPassword] = useState('admin123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
