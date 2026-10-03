@@ -107,7 +107,7 @@ export const OrdersTable: React.FC<OrdersTableProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+    <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
       {/* Controls Bar */}
       <div className="p-5 border-b border-slate-100 bg-slate-50/40 flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center">
         <form onSubmit={handleSearchSubmit} className="flex gap-2 flex-1 max-w-md">
