@@ -1,0 +1,377 @@
+/* ============================================================
+   TIMELINE SECTION — timeline.css
+   Compatible with Shopify OS 2.0 Theme
+   ============================================================ */
+
+/* ---------- CSS Custom Properties ---------- */
+.sec__timeline {
+  --tl-line-color: var(--timeline-line-color, var(--color-border));
+  --tl-dot-color: var(--timeline-dot-color, var(--color-heading));
+  --tl-dot-size: 1.6rem;
+  --tl-dot-border: 3px;
+  --tl-line-width: 2px;
+  --tl-node-size: 3.6rem;
+  --tl-content-max-width: 44%;
+  --tl-gap: var(--timeline-item-gap, 60px);
+  --tl-gap-mb: var(--timeline-item-gap-mb, 36px);
+  --tl-card-radius: var(--rounded-radius, 8px);
+  --tl-card-padding: 2.8rem;
+  --tl-card-padding-mb: 2rem;
+}
+
+/* ---------- Timeline Wrapper ---------- */
+.timeline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 1rem 0;
+}
+
+/* ---------- Center Vertical Line ---------- */
+.timeline__line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: var(--tl-line-width);
+  background-color: var(--tl-line-color);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ---------- Timeline Item ---------- */
+.timeline__item {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: var(--tl-gap);
+}
+.timeline__item:last-child {
+  margin-bottom: 0;
+}
+
+/* ---- Alternating Layout ---- */
+.timeline--alternating .timeline__item--left {
+  flex-direction: row;
+  justify-content: flex-end;
+  padding-right: calc(50% + var(--tl-node-size) * 0.5 + 2rem);
+}
+.timeline--alternating .timeline__item--right {
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  padding-left: calc(50% + var(--tl-node-size) * 0.5 + 2rem);
+}
+
+/* ---- All Left Layout ---- */
+.timeline--left .timeline__item {
+  flex-direction: row;
+  justify-content: flex-end;
+  padding-right: calc(50% + var(--tl-node-size) * 0.5 + 2rem);
+}
+
+/* ---- All Right Layout ---- */
+.timeline--right .timeline__item {
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  padding-left: calc(50% + var(--tl-node-size) * 0.5 + 2rem);
+}
+
+/* ---------- Node (dot container) — sits exactly on center line ---------- */
+.timeline__node {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tl-node-size);
+  height: var(--tl-node-size);
+  flex-shrink: 0;
+}
+
+/* ---------- Dot ---------- */
+.timeline__dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tl-node-size);
+  height: var(--tl-node-size);
+  border-radius: 50%;
+  background-color: var(--tl-dot-color);
+  border: var(--tl-dot-border) solid var(--color-background, #fff);
+  box-shadow: 0 0 0 var(--tl-dot-border) var(--tl-line-color);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  z-index: 2;
+  color: var(--color-background, #fff);
+  font-size: 1.6rem;
+  line-height: 1;
+}
+.timeline__item:hover .timeline__dot {
+  transform: scale(1.15);
+  box-shadow: 0 0 0 4px var(--tl-dot-color);
+}
+.timeline__dot-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+/* ---------- Content Card ---------- */
+.timeline__content {
+  width: var(--tl-content-max-width);
+  max-width: 100%;
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--tl-card-radius);
+  padding: var(--tl-card-padding);
+  position: relative;
+  word-break: break-word;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.3s ease;
+}
+.timeline__item:hover .timeline__content {
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* Content card tail / arrow pointing toward center line */
+.timeline__content::before {
+  content: '';
+  position: absolute;
+  top: calc(var(--tl-node-size) / 2 - 8px);
+  width: 14px;
+  height: 14px;
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  transform: rotate(45deg);
+  z-index: -1;
+}
+
+/* Left-side item: arrow points to the right */
+.timeline--alternating .timeline__item--left .timeline__content::before,
+.timeline--left .timeline__item .timeline__content::before {
+  right: -8px;
+  left: auto;
+  border-left-color: transparent;
+  border-bottom-color: transparent;
+}
+
+/* Right-side item: arrow points to the left */
+.timeline--alternating .timeline__item--right .timeline__content::before,
+.timeline--right .timeline__item .timeline__content::before {
+  left: -8px;
+  right: auto;
+  border-right-color: transparent;
+  border-top-color: transparent;
+}
+
+/* ---------- Date ---------- */
+.timeline__date {
+  display: inline-block;
+  font-size: 1.2rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--tl-dot-color);
+  background-color: color-mix(in srgb, var(--tl-dot-color) 10%, transparent);
+  padding: 0.3rem 1rem;
+  border-radius: calc(var(--tl-card-radius) / 2);
+  margin-bottom: 0.8rem;
+  font-weight: var(--subheading-weight, 600);
+}
+
+/* ---------- Title ---------- */
+.timeline__title {
+  font-family: var(--heading-font);
+  font-weight: var(--heading-weight);
+  color: var(--color-heading);
+  font-size: calc(var(--heading-font-scale, 1) * 2rem);
+  line-height: 1.3;
+  margin-top: 0.4rem;
+  margin-bottom: 0.8rem;
+}
+
+/* ---------- Image ---------- */
+.timeline__image {
+  width: 100%;
+  overflow: hidden;
+  border-radius: calc(var(--tl-card-radius) - 2px);
+}
+.timeline__image[style*="--aspect-ratio"] {
+  position: relative;
+  overflow: hidden;
+}
+.timeline__image[style*="--aspect-ratio"]::before {
+  content: '';
+  display: block;
+  height: 0;
+  padding-top: calc(100% / (0 + var(--aspect-ratio, 4/3)));
+  pointer-events: none;
+}
+.timeline__image-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+.timeline__image[style*="--aspect-ratio"] .timeline__image-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---------- Description ---------- */
+.timeline__description {
+  color: var(--color-text);
+  font-size: var(--body-font-size, 1.4rem);
+  line-height: var(--body-line-height, 1.6);
+  margin-top: 0.8rem;
+}
+
+/* ---------- Button ---------- */
+.timeline__button .btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+/* ============================================================
+   SCROLL ANIMATION
+   ============================================================ */
+@media (prefers-reduced-motion: no-preference) {
+  .timeline--animated .timeline__item--anim {
+    opacity: 0;
+    transform: translateY(2.4rem);
+    transition:
+      opacity 0.55s ease,
+      transform 0.55s ease;
+    transition-delay: calc(var(--item-index, 0) * 0.1s);
+  }
+  .timeline--animated .timeline__item--anim.timeline__item--visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  /* Left items slide in from the left on desktop */
+  @media (min-width: 768px) {
+    .timeline--alternating .timeline__item--left.timeline__item--anim,
+    .timeline--left .timeline__item.timeline__item--anim {
+      transform: translateX(-2rem);
+    }
+    .timeline--alternating .timeline__item--right.timeline__item--anim,
+    .timeline--right .timeline__item.timeline__item--anim {
+      transform: translateX(2rem);
+    }
+    .timeline--animated .timeline__item--anim.timeline__item--visible {
+      transform: translateX(0) translateY(0);
+    }
+  }
+  /* Dot animation */
+  .timeline--animated .timeline__dot {
+    transform: scale(0.6);
+    opacity: 0;
+    transition: transform 0.4s ease 0.2s, opacity 0.4s ease 0.2s, box-shadow 0.3s ease;
+  }
+  .timeline--animated .timeline__item--visible .timeline__dot {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ============================================================
+   MOBILE LAYOUT  (single-column, line on left)
+   ============================================================ */
+@media (max-width: 767.98px) {
+  /* Reset all layout-specific positioning */
+  .timeline__line {
+    left: 2.2rem;
+    transform: none;
+  }
+
+  .timeline__item,
+  .timeline--alternating .timeline__item--left,
+  .timeline--alternating .timeline__item--right,
+  .timeline--left .timeline__item,
+  .timeline--right .timeline__item {
+    flex-direction: row !important;
+    justify-content: flex-start !important;
+    padding-right: 0 !important;
+    padding-left: 5.4rem !important;
+    margin-bottom: var(--tl-gap-mb);
+  }
+
+  /* Node positioned on left line */
+  .timeline__node {
+    left: 0;
+    transform: none;
+    top: 0;
+    width: 4.4rem;
+    height: 4.4rem;
+  }
+  .timeline__dot {
+    width: 3.2rem;
+    height: 3.2rem;
+    font-size: 1.2rem;
+  }
+
+  /* Content fills remaining width */
+  .timeline__content {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: var(--tl-card-padding-mb);
+  }
+
+  /* Arrow always points left on mobile */
+  .timeline__content::before,
+  .timeline--alternating .timeline__item--left .timeline__content::before,
+  .timeline--alternating .timeline__item--right .timeline__content::before,
+  .timeline--left .timeline__item .timeline__content::before,
+  .timeline--right .timeline__item .timeline__content::before {
+    left: -8px !important;
+    right: auto !important;
+    border-right-color: transparent !important;
+    border-top-color: transparent !important;
+    border-left-color: var(--color-border) !important;
+    border-bottom-color: var(--color-border) !important;
+    top: 1.2rem;
+  }
+
+  /* Timeline title sizing on mobile */
+  .timeline__title {
+    font-size: 1.8rem;
+  }
+
+  /* Prevent horizontal overflow */
+  .timeline__image {
+    max-width: 100%;
+  }
+}
+
+/* ---------- Tablet ---------- */
+@media (min-width: 768px) and (max-width: 1024.98px) {
+  :root {
+    --tl-content-max-width: 42%;
+  }
+  .sec__timeline {
+    --tl-card-padding: 2.2rem;
+  }
+}
+
+/* ============================================================
+   DESIGN MODE (Shopify Theme Editor)
+   — prevent animation-related flicker while editing
+   ============================================================ */
+.shopify-section-group-header-group .timeline--animated .timeline__item--anim,
+.timeline--animated .timeline__item--anim:has(+ .shopify-block-selected),
+.timeline--animated .timeline__item--anim.shopify-block-selected {
+  opacity: 1 !important;
+  transform: none !important;
+}

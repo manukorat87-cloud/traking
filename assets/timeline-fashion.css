@@ -1,0 +1,760 @@
+/* =====================================================================
+   TIMELINE — FASHION EDITION  |  timeline-fashion.css
+   Premium Indian Ethnic Fashion Editorial Timeline
+   Uses theme CSS variables — zero hardcoded colors except fallbacks
+   ===================================================================== */
+
+/* ── Root / CSS Custom Properties ────────────────────────────────── */
+.sec__tl-fashion {
+  --tl-line:        var(--tl-line-color, var(--color-border));
+  --tl-dot:         var(--tl-dot-color, var(--color-heading));
+  --tl-dot-size:    4.8rem;
+  --tl-line-w:      1px;
+  --tl-node-w:      6rem;   /* width reserved for the center node column */
+  --tl-gap:         var(--tl-item-gap, 96px);
+  --tl-gap-mb:      var(--tl-item-gap-mb, 48px);
+  --tl-img-r:       var(--tl-img-radius, 4px);
+  --tl-col-w:       44%;    /* content / image column width on desktop */
+  --tl-content-pad: 3.2rem 4rem;
+  --tl-ease:        cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── Section Header ───────────────────────────────────────────────── */
+.tl-section-header {
+  margin-bottom: 7.2rem;
+}
+@media (max-width: 767.98px) {
+  .tl-section-header { margin-bottom: 4.8rem; }
+}
+
+/* Ornament row (lines + flower) */
+.tl-ornament--header {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  margin-bottom: 2.4rem;
+}
+.tl-section-header.text-center .tl-ornament--header { justify-content: center; }
+.tl-section-header.text-right  .tl-ornament--header { justify-content: flex-end; }
+
+.tl-ornament__line {
+  display: block;
+  flex: 1;
+  max-width: 8rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--tl-dot), transparent);
+  opacity: .5;
+}
+.tl-ornament__flower {
+  width: 2rem;
+  height: 2rem;
+  color: var(--tl-dot);
+  flex-shrink: 0;
+}
+
+/* Eyebrow */
+.tl-section-eyebrow {
+  font-size: 1.1rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--tl-dot);
+  font-family: var(--heading-font);
+  font-weight: var(--subheading-weight, 500);
+  margin: 0 0 1rem;
+  opacity: .85;
+}
+
+/* Section heading */
+.tl-section-heading {
+  font-family: var(--heading-font);
+  font-weight: var(--heading-weight);
+  color: var(--color-heading);
+  letter-spacing: var(--heading-letter-spacing);
+  margin-top: 0;
+  margin-bottom: 1.6rem;
+}
+
+.tl-section-description {
+  color: var(--color-text);
+  font-size: var(--body-font-size, 1.5rem);
+  max-width: 58ch;
+}
+.tl-section-header.text-center .tl-section-description { margin-inline: auto; }
+.tl-section-header.text-right  .tl-section-description { margin-left: auto; }
+
+/* ── Track (timeline wrapper) ─────────────────────────────────────── */
+.tl-track {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* Center vertical line */
+.tl-track__line {
+  position: absolute;
+  inset: 0 auto 0 50%;
+  transform: translateX(-50%);
+  width: var(--tl-line-w);
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    var(--tl-line) 6%,
+    var(--tl-line) 94%,
+    transparent 100%
+  );
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ── Timeline Item ────────────────────────────────────────────────── */
+.tl-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--tl-col-w) var(--tl-node-w) var(--tl-col-w);
+  grid-template-rows: auto;
+  align-items: center;
+  gap: 0;
+  margin-bottom: var(--tl-gap);
+  width: 100%;
+}
+.tl-item:last-child { margin-bottom: 0; }
+
+/* ── Alternating Layout ── */
+/* Side A  →  Image | Node | Content */
+.tl-track--alternating .tl-item--a,
+.tl-track--image-left  .tl-item {
+  grid-template-areas: "image node content";
+}
+/* Side B  →  Content | Node | Image */
+.tl-track--alternating .tl-item--b,
+.tl-track--image-right .tl-item {
+  grid-template-areas: "content node image";
+}
+
+.tl-item__image-col   { grid-area: image;   }
+.tl-item__node        { grid-area: node;    justify-self: center; }
+.tl-item__content-col { grid-area: content; }
+
+/* ── Image Column ─────────────────────────────────────────────────── */
+/* Side A: image flushes right toward the line */
+.tl-track--alternating .tl-item--a .tl-item__image-col,
+.tl-track--image-left  .tl-item    .tl-item__image-col {
+  padding-right: 3.2rem;
+}
+/* Side B: image flushes left toward the line */
+.tl-track--alternating .tl-item--b .tl-item__image-col,
+.tl-track--image-right .tl-item    .tl-item__image-col {
+  padding-left: 3.2rem;
+}
+
+/* Image figure */
+.tl-image {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--tl-img-r);
+  display: block;
+  width: 100%;
+  line-height: 0;
+}
+
+/* Ratio via ::before padding trick */
+.tl-image--ratio::before {
+  content: '';
+  display: block;
+  width: 100%;
+  padding-top: calc(100% / (0 + var(--img-ratio, 4/5)));
+  pointer-events: none;
+}
+.tl-image--ratio .tl-image__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tl-image__img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  border-radius: var(--tl-img-r);
+  transition: transform 0.7s var(--tl-ease);
+}
+.tl-item:hover .tl-image__img {
+  transform: scale(1.03);
+}
+
+/* Elegant thin border frame on the image */
+.tl-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--tl-img-r);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Date badge on image */
+.tl-image__date {
+  position: absolute;
+  bottom: 1.6rem;
+  right: 1.6rem;
+  z-index: 2;
+  font-family: var(--heading-font);
+  font-weight: var(--heading-weight);
+  font-size: 2rem;
+  letter-spacing: .05em;
+  color: #fff;
+  text-shadow: 0 1px 8px rgba(0,0,0,.45);
+  background: linear-gradient(135deg, rgba(0,0,0,.3) 0%, transparent 100%);
+  padding: .4rem 1rem .4rem .6rem;
+  border-radius: 0 0 var(--tl-img-r) 0;
+}
+/* Side B: date badge on left side of image */
+.tl-track--alternating .tl-item--b .tl-image__date,
+.tl-track--image-right .tl-item    .tl-image__date {
+  right: auto;
+  left: 1.6rem;
+  border-radius: 0 0 0 var(--tl-img-r);
+}
+
+/* Placeholder */
+.tl-image--placeholder {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--tl-dot) 6%, var(--color-background)), color-mix(in srgb, var(--tl-line) 12%, var(--color-background)));
+  border: 1px dashed var(--tl-line);
+}
+.tl-image__placeholder-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+}
+.tl-image__placeholder-inner svg {
+  width: 6rem;
+  height: 6rem;
+  color: var(--tl-dot);
+}
+
+/* ── Node (center column) ─────────────────────────────────────────── */
+.tl-item__node {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  width: var(--tl-node-w);
+  align-self: stretch;
+}
+
+/* Connector lines (fill the vertical space above/below the dot) */
+.tl-node__connector {
+  flex: 1;
+  width: var(--tl-line-w);
+  background-color: var(--tl-line);
+  min-height: 2rem;
+}
+
+/* Decorative petals around the dot */
+.tl-node__decor {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 5.6rem;
+  height: 5.6rem;
+  pointer-events: none;
+  z-index: 0;
+}
+.tl-node__petals {
+  width: 100%;
+  height: 100%;
+  color: var(--tl-dot);
+  animation: tl-petals-spin 20s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tl-node__petals { animation: none; }
+}
+@keyframes tl-petals-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Dot */
+.tl-node__dot {
+  position: relative;
+  z-index: 1;
+  width: var(--tl-dot-size);
+  height: var(--tl-dot-size);
+  border-radius: 50%;
+  background-color: var(--color-background);
+  border: 1px solid var(--tl-line);
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--tl-dot) 12%, transparent),
+    inset 0 0 0 calc(var(--tl-dot-size) / 2 - 6px) var(--tl-dot);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: box-shadow 0.4s var(--tl-ease), transform 0.4s var(--tl-ease);
+  flex-shrink: 0;
+}
+.tl-item:hover .tl-node__dot {
+  transform: scale(1.12);
+  box-shadow:
+    0 0 0 7px color-mix(in srgb, var(--tl-dot) 18%, transparent),
+    inset 0 0 0 calc(var(--tl-dot-size) / 2 - 6px) var(--tl-dot);
+}
+
+.tl-node__icon {
+  position: relative;
+  z-index: 2;
+  font-size: 1.8rem;
+  line-height: 1;
+  display: block;
+  /* Override the inset inner fill when icon present */
+  text-shadow: 0 1px 4px rgba(0,0,0,.2);
+}
+/* When icon is present, clear the inner fill */
+.tl-node__dot:has(.tl-node__icon) {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--tl-dot) 12%, transparent);
+  background: var(--tl-dot);
+  color: #fff;
+}
+.tl-item:hover .tl-node__dot:has(.tl-node__icon) {
+  box-shadow: 0 0 0 7px color-mix(in srgb, var(--tl-dot) 18%, transparent);
+}
+
+/* ── Content Column ───────────────────────────────────────────────── */
+/* Side A: content is on the right → left-padded */
+.tl-track--alternating .tl-item--a .tl-item__content-col,
+.tl-track--image-left  .tl-item    .tl-item__content-col {
+  padding-left: 3.2rem;
+}
+/* Side B: content is on the left → right-padded */
+.tl-track--alternating .tl-item--b .tl-item__content-col,
+.tl-track--image-right .tl-item    .tl-item__content-col {
+  padding-right: 3.2rem;
+  text-align: right;
+}
+
+.tl-content {
+  max-width: 48ch;
+}
+.tl-track--alternating .tl-item--b .tl-content,
+.tl-track--image-right .tl-item    .tl-content {
+  margin-left: auto;
+}
+
+/* Content eyebrow */
+.tl-content__eyebrow {
+  font-size: 1.05rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--tl-dot);
+  font-family: var(--heading-font);
+  font-weight: var(--subheading-weight, 500);
+  margin: 0 0 .8rem;
+  opacity: .8;
+}
+
+/* Content heading */
+.tl-content__heading {
+  font-family: var(--heading-font);
+  font-weight: var(--heading-weight);
+  color: var(--color-heading);
+  letter-spacing: var(--heading-letter-spacing);
+  font-size: clamp(2rem, 2.6vw, 2.8rem);
+  line-height: 1.25;
+  margin-top: 0;
+  margin-bottom: 1.2rem;
+}
+
+/* Content description */
+.tl-content__description {
+  color: var(--color-text);
+  font-size: var(--body-font-size, 1.4rem);
+  line-height: 1.75;
+  margin-bottom: 2.4rem;
+}
+
+/* Decorative underline below heading */
+.tl-content__heading::after {
+  content: '';
+  display: block;
+  width: 3rem;
+  height: 1px;
+  background-color: var(--tl-dot);
+  margin-top: .8rem;
+  opacity: .5;
+}
+.tl-track--alternating .tl-item--b .tl-content__heading::after,
+.tl-track--image-right .tl-item    .tl-content__heading::after {
+  margin-left: auto;
+}
+
+/* Mobile date (hidden on desktop) */
+.tl-content__date-mb { display: none; }
+
+/* ── Elegant Button ───────────────────────────────────────────────── */
+.tl-content__action { margin-top: 2rem; }
+
+.tl-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .8rem;
+  font-family: var(--heading-font);
+  font-size: 1.2rem;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  font-weight: var(--subheading-weight, 500);
+  color: var(--tl-dot);
+  text-decoration: none;
+  padding: .6rem 0;
+  border-bottom: 1px solid var(--tl-dot);
+  transition: gap 0.3s var(--tl-ease), color 0.3s, border-color 0.3s;
+}
+.tl-btn:hover {
+  gap: 1.4rem;
+  color: var(--color-heading);
+  border-color: var(--color-heading);
+}
+.tl-btn__arrow {
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s var(--tl-ease);
+}
+.tl-btn:hover .tl-btn__arrow { transform: translateX(.4rem); }
+
+/* =====================================================================
+   SCROLL ANIMATION
+   ===================================================================== */
+@media (prefers-reduced-motion: no-preference) {
+  .tl-track--animated .tl-item--anim {
+    opacity: 0;
+    transition:
+      opacity  .65s var(--tl-ease),
+      transform .65s var(--tl-ease);
+    transition-delay: calc(var(--item-i, 0) * .08s);
+  }
+  .tl-track--animated .tl-item--a.tl-item--anim { transform: translateX(-3rem); }
+  .tl-track--animated .tl-item--b.tl-item--anim { transform: translateX(3rem); }
+
+  .tl-track--animated .tl-item--anim.tl-item--visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* Dot reveal */
+  .tl-track--animated .tl-node__dot {
+    opacity: 0;
+    transform: scale(.5);
+    transition: opacity .5s var(--tl-ease) .3s, transform .5s var(--tl-ease) .3s, box-shadow .4s var(--tl-ease);
+  }
+  .tl-track--animated .tl-item--visible .tl-node__dot {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* =====================================================================
+   TABLET  768px – 1024px
+   ===================================================================== */
+@media (min-width: 768px) and (max-width: 1024.98px) {
+  .sec__tl-fashion {
+    --tl-col-w: 41%;
+    --tl-node-w: 5.2rem;
+    --tl-dot-size: 4rem;
+  }
+  .tl-track--alternating .tl-item--a .tl-item__image-col,
+  .tl-track--image-left  .tl-item    .tl-item__image-col,
+  .tl-track--alternating .tl-item--b .tl-item__image-col,
+  .tl-track--image-right .tl-item    .tl-item__image-col {
+    padding-right: 2rem;
+    padding-left: 2rem;
+  }
+  .tl-track--alternating .tl-item--a .tl-item__content-col,
+  .tl-track--image-left  .tl-item    .tl-item__content-col {
+    padding-left: 2rem;
+  }
+  .tl-track--alternating .tl-item--b .tl-item__content-col,
+  .tl-track--image-right .tl-item    .tl-item__content-col {
+    padding-right: 2rem;
+  }
+}
+
+/* =====================================================================
+   MOBILE — Precision Layout  (≤ 767px)
+   ─────────────────────────────────────────────────────────────────────
+   Architecture:
+   • --mb-dot-size : dot diameter  = 2.8rem
+   • --mb-dot-r    : dot radius    = 1.4rem
+   • --mb-line-x   : line X centre = 1.4rem  (aligns to dot centre)
+   • --mb-indent   : content left  = 4rem    (line + comfortable gap)
+   • Continuous line is drawn as a single ::before on .tl-track
+     so there are no gaps between items at any spacing value
+   ===================================================================== */
+@media (max-width: 767.98px) {
+
+  /* ── Mobile tokens ── */
+  .sec__tl-fashion {
+    --mb-dot-size: 2.8rem;
+    --mb-dot-r:    1.4rem;     /* half of dot size */
+    --mb-line-x:   1.4rem;     /* left position of line centre */
+    --mb-indent:   4rem;       /* how far content is pushed right of left edge */
+  }
+
+  /* ── Section header ── */
+  .tl-section-header {
+    margin-bottom: 3.6rem;
+  }
+  /* Prevent ornament lines from overflowing on very narrow screens */
+  .tl-ornament__line {
+    max-width: 4rem;
+  }
+  .tl-section-heading {
+    font-size: clamp(2.2rem, 6vw, 3rem);
+  }
+  .tl-section-description {
+    font-size: var(--body-font-size, 1.4rem);
+  }
+
+  /* ── Track: hide the desktop center-line; draw mobile line as single element ── */
+  .tl-track__line {
+    display: none;
+  }
+
+  /* Continuous left-side line for entire timeline height */
+  .tl-track {
+    position: relative;
+  }
+  .tl-track::before {
+    content: '';
+    position: absolute;
+    /* Start just below the dot centre of first item (dot-r from top of first item) */
+    top: calc(var(--mb-dot-r) + 0.2rem);
+    bottom: calc(var(--mb-dot-r) + 0.2rem);
+    left: var(--mb-line-x);
+    transform: translateX(-50%);
+    width: var(--tl-line-w, 1px);
+    background-color: var(--tl-line);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* ── Each timeline item: flex column, indented from left ── */
+  .tl-item,
+  .tl-track--alternating .tl-item--a,
+  .tl-track--alternating .tl-item--b,
+  .tl-track--image-left  .tl-item,
+  .tl-track--image-right .tl-item {
+    /* Reset desktop grid completely */
+    display:               flex !important;
+    flex-direction:        column !important;
+    grid-template-areas:   unset !important;
+    grid-template-columns: unset !important;
+    /* Left indent makes space for line + dot */
+    padding-left:          var(--mb-indent) !important;
+    padding-right:         0 !important;
+    margin-bottom:         var(--tl-gap-mb);
+    text-align:            left !important;
+    align-items:           stretch !important;
+    position:              relative;
+    width:                 100%;
+    box-sizing:            border-box;
+  }
+  .tl-item:last-child { margin-bottom: 0; }
+
+  /* ── Node: absolutely positioned dot on the left line ── */
+  .tl-item__node {
+    position:         absolute;
+    /* Horizontally: centre the dot on the line */
+    left:             calc(var(--mb-line-x) - var(--mb-dot-r));
+    /* Vertically: align with top of image (first child) */
+    top:              0;
+    width:            var(--mb-dot-size);
+    height:           var(--mb-dot-size);
+    /* Override desktop flex column */
+    flex-direction:   row;
+    align-items:      center;
+    justify-content:  center;
+    align-self:       auto;
+    justify-self:     auto;
+    z-index:          2;
+  }
+
+  /* Hide the desktop line connectors inside the node */
+  .tl-node__connector { display: none; }
+
+  /* Scale down petal decor */
+  .tl-node__decor {
+    width:  3.2rem;
+    height: 3.2rem;
+  }
+
+  /* Dot itself */
+  .tl-node__dot {
+    width:      var(--mb-dot-size);
+    height:     var(--mb-dot-size);
+    box-shadow:
+      0 0 0 3px color-mix(in srgb, var(--tl-dot) 14%, transparent),
+      inset 0 0 0 calc(var(--mb-dot-r) - 4px) var(--tl-dot);
+    /* No hover scale on mobile — avoids reflow */
+    transition: none;
+  }
+  .tl-item:hover .tl-node__dot {
+    transform: none;
+    box-shadow:
+      0 0 0 3px color-mix(in srgb, var(--tl-dot) 14%, transparent),
+      inset 0 0 0 calc(var(--mb-dot-r) - 4px) var(--tl-dot);
+  }
+
+  /* Dot with icon */
+  .tl-node__dot:has(.tl-node__icon) {
+    background:  var(--tl-dot);
+    color:       #fff;
+    box-shadow:  0 0 0 3px color-mix(in srgb, var(--tl-dot) 14%, transparent);
+  }
+  .tl-node__icon { font-size: 1.3rem; }
+
+  /* ── Columns: stretch to full width ── */
+  .tl-item__image-col,
+  .tl-item__content-col {
+    width:   100% !important;
+    padding: 0 !important;
+    text-align: left !important;
+  }
+
+  /* Order: image first, content second */
+  .tl-item__image-col   { order: 1; margin-bottom: 1.4rem; }
+  .tl-item__content-col { order: 2; }
+
+  /* ── Image ── */
+  .tl-image {
+    width:         100%;
+    border-radius: var(--tl-img-r);
+    overflow:      hidden;
+  }
+
+  /* Disable hover zoom on mobile — no transform jank */
+  .tl-item:hover .tl-image__img {
+    transform: none;
+  }
+
+  /* Date badge — always bottom-right on mobile regardless of side */
+  .tl-image__date,
+  .tl-track--alternating .tl-item--b .tl-image__date,
+  .tl-track--image-right .tl-item    .tl-image__date {
+    right:         1rem !important;
+    left:          auto !important;
+    bottom:        1rem !important;
+    font-size:     1.5rem;
+    border-radius: 0 0 var(--tl-img-r) 0 !important;
+  }
+
+  /* ── Content ── */
+  .tl-content {
+    max-width:   100% !important;
+    margin:      0 !important;
+    text-align:  left !important;
+  }
+
+  .tl-content__eyebrow {
+    font-size:   1rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .tl-content__heading {
+    font-size:     clamp(1.8rem, 5vw, 2.4rem);
+    line-height:   1.3;
+    margin-bottom: 1rem;
+    word-break:    break-word;
+    overflow-wrap: break-word;
+  }
+
+  /* Reset right-aligned heading underline */
+  .tl-content__heading::after {
+    margin-left: 0 !important;
+  }
+
+  .tl-content__description {
+    font-size:     var(--body-font-size, 1.4rem);
+    line-height:   1.7;
+    margin-bottom: 0;
+  }
+
+  .tl-content__action {
+    margin-top: 1.4rem;
+  }
+
+  /* Tap-friendly button */
+  .tl-btn {
+    min-height:  4.4rem;
+    padding:     0.8rem 0;
+    font-size:   1.15rem;
+  }
+
+  /* ── Mobile-only date (shown below image when image present, or at top) ── */
+  .tl-content__date-mb {
+    display:       block;
+    font-family:   var(--heading-font);
+    font-weight:   var(--subheading-weight, 500);
+    font-size:     1rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color:         var(--tl-dot);
+    opacity:       .75;
+    margin-bottom: 0.5rem;
+    order:         0;  /* rendered above eyebrow in flex context */
+  }
+
+  /* ── Animation override: vertical fade-up only on mobile ── */
+  @media (prefers-reduced-motion: no-preference) {
+    .tl-track--animated .tl-item--a.tl-item--anim,
+    .tl-track--animated .tl-item--b.tl-item--anim {
+      transform: translateY(1.6rem) !important;
+    }
+    .tl-track--animated .tl-item--anim.tl-item--visible {
+      transform: translateY(0) translateX(0) !important;
+    }
+    .tl-track--animated .tl-node__dot {
+      opacity:   0;
+      transform: scale(0.6);
+      transition:
+        opacity   .4s var(--tl-ease) .2s,
+        transform .4s var(--tl-ease) .2s;
+    }
+    .tl-track--animated .tl-item--visible .tl-node__dot {
+      opacity:   1;
+      transform: scale(1);
+    }
+  }
+}
+
+/* ── Extra small (≤ 390px): micro-adjustments ── */
+@media (max-width: 390px) {
+  .sec__tl-fashion {
+    --mb-dot-size: 2.4rem;
+    --mb-dot-r:    1.2rem;
+    --mb-line-x:   1.2rem;
+    --mb-indent:   3.4rem;
+  }
+  .tl-content__heading {
+    font-size: clamp(1.7rem, 5vw, 2rem);
+  }
+}
+
+/* =====================================================================
+   THEME EDITOR — keep items visible when selected / editing
+   ===================================================================== */
+.tl-item--anim.shopify-block-selected,
+.tl-item--anim:has(+ .shopify-block-selected) {
+  opacity:   1 !important;
+  transform: none !important;
+}
+

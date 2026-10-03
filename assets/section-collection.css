@@ -31,6 +31,10 @@
 .collection-item__count.absolute {
   right: -16px;
 }
+/* Apply section-level image ratio override when --collection-image-ratio is set */
+.sec__collection-list[style*="--collection-image-ratio"] .collection-item__media--ratio {
+  --aspect-ratio: var(--collection-image-ratio) !important;
+}
 @media (max-width: 575.98px) {
   [data-mobile="3"]
     .collection-item__information.absolute

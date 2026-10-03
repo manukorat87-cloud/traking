@@ -1,0 +1,546 @@
+{{ 'timeline-fashion.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign section_st = section.settings
+  assign section_width = section_st.section_width
+  assign color_scheme = section_st.color_scheme
+  assign enable_animation = section_st.enable_animation
+  assign layout = section_st.timeline_layout
+
+  if section_st.reset_spacing
+    assign reset_spacing = ' remove_spacing'
+  endif
+
+  assign header_size = ''
+  if section_st.header_size == 'small'
+    assign header_size = 'h3'
+  elsif section_st.header_size == 'large'
+    assign header_size = 'h1-size'
+  endif
+-%}
+
+{%- capture section_style -%}
+  --section-pt: {{ section_st.padding_top }};
+  --section-pb: {{ section_st.padding_bottom }};
+  --tl-line-color: {{ section_st.line_color }};
+  --tl-dot-color: {{ section_st.dot_color }};
+  --tl-item-gap: {{ section_st.item_spacing }}px;
+  --tl-item-gap-mb: {{ section_st.item_spacing_mobile }}px;
+  --tl-img-radius: {{ section_st.image_border_radius }}px;
+{%- endcapture -%}
+
+<section
+  id="shopify-section-tl-{{ section.id }}"
+  class="section{% if section_st.padding_top < 30 %} pt-min{% endif %}{% if section_st.padding_bottom < 30 %} pb-min{% endif %} sec__tl-fashion color-{{ color_scheme }} gradient{{ reset_spacing }}"
+  style="{{ section_style | strip | strip_newlines }}"
+>
+  <div class="{{ section_width }}">
+
+    {%- comment -%} ── Section Header ── {%- endcomment -%}
+    {%- if section_st.heading != blank or section_st.description != blank -%}
+      <div class="tl-section-header text-{{ section_st.header_alignment }}">
+
+        {%- comment -%} Ornamental top line {%- endcomment -%}
+        <div class="tl-ornament tl-ornament--header" aria-hidden="true">
+          <span class="tl-ornament__line"></span>
+          <svg class="tl-ornament__flower" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="2.5"/>
+            <path d="M12 3C10.5 5.5 10.5 8.5 12 9.5 13.5 8.5 13.5 5.5 12 3Z" opacity=".6"/>
+            <path d="M12 21C10.5 18.5 10.5 15.5 12 14.5 13.5 15.5 13.5 18.5 12 21Z" opacity=".6"/>
+            <path d="M3 12C5.5 10.5 8.5 10.5 9.5 12 8.5 13.5 5.5 13.5 3 12Z" opacity=".6"/>
+            <path d="M21 12C18.5 10.5 15.5 10.5 14.5 12 15.5 13.5 18.5 13.5 21 12Z" opacity=".6"/>
+            <path d="M5.6 5.6C7.3 7.7 9.8 8.8 11 7.7 10 6.5 8.8 4 5.6 5.6Z" opacity=".4"/>
+            <path d="M18.4 18.4C16.7 16.3 14.2 15.2 13 16.3 14 17.5 15.2 20 18.4 18.4Z" opacity=".4"/>
+            <path d="M5.6 18.4C7.7 16.7 8.8 14.2 7.7 13 6.5 14 4 15.2 5.6 18.4Z" opacity=".4"/>
+            <path d="M18.4 5.6C16.3 7.3 15.2 9.8 16.3 11 17.5 10 20 8.8 18.4 5.6Z" opacity=".4"/>
+          </svg>
+          <span class="tl-ornament__line"></span>
+        </div>
+
+        {%- if section_st.eyebrow != blank -%}
+          <p class="tl-section-eyebrow">{{ section_st.eyebrow }}</p>
+        {%- endif -%}
+
+        {%- if section_st.heading != blank -%}
+          <h2 class="tl-section-heading heading-letter-spacing {{ header_size }}">
+            {{ section_st.heading }}
+          </h2>
+        {%- endif -%}
+
+        {%- if section_st.description != blank -%}
+          <div class="tl-section-description rich__text-m0">{{ section_st.description }}</div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} ── Timeline Items ── {%- endcomment -%}
+    {%- if section.blocks.size > 0 -%}
+      <div class="tl-track tl-track--{{ layout }}{% if enable_animation %} tl-track--animated{% endif %}">
+
+        {%- comment -%} Center vertical line {%- endcomment -%}
+        <div class="tl-track__line" aria-hidden="true"></div>
+
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign b = block.settings
+            assign is_even = forloop.index | modulo: 2
+            assign side = 'a'
+            if is_even == 0
+              assign side = 'b'
+            endif
+
+            assign img_ratio_value = ''
+            if b.image_ratio == 'square'
+              assign img_ratio_value = '1/1'
+            elsif b.image_ratio == 'portrait'
+              assign img_ratio_value = '3/4'
+            elsif b.image_ratio == 'landscape'
+              assign img_ratio_value = '4/3'
+            elsif b.image_ratio == 'wide'
+              assign img_ratio_value = '16/9'
+            elsif b.image_ratio == 'tall'
+              assign img_ratio_value = '2/3'
+            endif
+
+            assign load = 'lazy'
+            if forloop.index == 1
+              assign load = 'eager'
+            endif
+          -%}
+
+          <div
+            class="tl-item tl-item--{{ side }}{% if enable_animation %} tl-item--anim{% endif %}"
+            {{ block.shopify_attributes }}
+            style="--item-i: {{ forloop.index0 }};"
+          >
+
+            {%- comment -%} ── Image Column ── {%- endcomment -%}
+            <div class="tl-item__image-col">
+              {%- if b.image != blank -%}
+                <figure
+                  class="tl-image{% if img_ratio_value != blank %} tl-image--ratio{% endif %}"
+                  {% if img_ratio_value != blank %}style="--img-ratio: {{ img_ratio_value }};"{% endif %}
+                >
+                  {{
+                    b.image
+                    | image_url: width: 900
+                    | image_tag:
+                      loading: load,
+                      widths: '400, 600, 800, 900',
+                      sizes: '(min-width: 1025px) 40vw, (min-width: 768px) 46vw, calc(100vw - 4rem)',
+                      class: 'tl-image__img',
+                      alt: b.image.alt | default: b.heading | escape
+                  }}
+                  {%- if b.date != blank -%}
+                    <div class="tl-image__date" aria-label="Year: {{ b.date }}">{{ b.date }}</div>
+                  {%- endif -%}
+                </figure>
+              {%- else -%}
+                {%- comment -%} Placeholder when no image is set {%- endcomment -%}
+                <div class="tl-image tl-image--placeholder tl-image--ratio" style="--img-ratio: 4/5;">
+                  <div class="tl-image__placeholder-inner">
+                    <svg viewBox="0 0 80 80" fill="none" aria-hidden="true">
+                      <circle cx="40" cy="40" r="38" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4" opacity=".3"/>
+                      <path d="M40 22 L44 36 L58 36 L47 45 L51 59 L40 50 L29 59 L33 45 L22 36 L36 36 Z" fill="currentColor" opacity=".15"/>
+                    </svg>
+                    {%- if b.date != blank -%}
+                      <div class="tl-image__date">{{ b.date }}</div>
+                    {%- endif -%}
+                  </div>
+                </div>
+              {%- endif -%}
+            </div>
+
+            {%- comment -%} ── Center Node ── {%- endcomment -%}
+            <div class="tl-item__node" aria-hidden="true">
+              {%- if b.show_decor -%}
+                <div class="tl-node__decor">
+                  <svg class="tl-node__petals" viewBox="0 0 48 48" fill="currentColor">
+                    <path d="M24 4C22 9 22 15 24 17 26 15 26 9 24 4Z" opacity=".35"/>
+                    <path d="M24 44C22 39 22 33 24 31 26 33 26 39 24 44Z" opacity=".35"/>
+                    <path d="M4 24C9 22 15 22 17 24 15 26 9 26 4 24Z" opacity=".35"/>
+                    <path d="M44 24C39 22 33 22 31 24 33 26 39 26 44 24Z" opacity=".35"/>
+                  </svg>
+                </div>
+              {%- endif -%}
+              <div class="tl-node__dot">
+                {%- if b.icon != blank -%}
+                  <span class="tl-node__icon" aria-hidden="true">{{ b.icon }}</span>
+                {%- endif -%}
+              </div>
+              <div class="tl-node__connector tl-node__connector--top"></div>
+              <div class="tl-node__connector tl-node__connector--bottom"></div>
+            </div>
+
+            {%- comment -%} ── Content Column ── {%- endcomment -%}
+            <div class="tl-item__content-col">
+              <div class="tl-content">
+
+                {%- if b.eyebrow != blank -%}
+                  <p class="tl-content__eyebrow">{{ b.eyebrow }}</p>
+                {%- endif -%}
+
+                {%- if b.heading != blank -%}
+                  <h3 class="tl-content__heading heading-letter-spacing">{{ b.heading }}</h3>
+                {%- endif -%}
+
+                {%- if b.description != blank -%}
+                  <div class="tl-content__description rich__text-m0">{{ b.description }}</div>
+                {%- endif -%}
+
+                {%- if b.button_label != blank -%}
+                  <div class="tl-content__action">
+                    <a
+                      href="{{ b.button_link | default: '#' }}"
+                      class="tl-btn no-underline"
+                      {% if b.button_link == blank %}aria-disabled="true"{% endif %}
+                    >
+                      <span class="tl-btn__label">{{ b.button_label }}</span>
+                      <span class="tl-btn__arrow" aria-hidden="true">
+                        <svg width="16" height="10" viewBox="0 0 16 10" fill="none">
+                          <path d="M1 5H15M15 5L11 1M15 5L11 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </span>
+                    </a>
+                  </div>
+                {%- endif -%}
+
+                {%- comment -%} Mobile-only date (shown when image is hidden or below) {%- endcomment -%}
+                {%- if b.date != blank -%}
+                  <span class="tl-content__date-mb" aria-hidden="true">{{ b.date }}</span>
+                {%- endif -%}
+
+              </div>
+            </div>
+
+          </div>{%- comment -%} /.tl-item {%- endcomment -%}
+        {%- endfor -%}
+
+      </div>{%- comment -%} /.tl-track {%- endcomment -%}
+    {%- endif -%}
+
+  </div>
+</section>
+
+{%- if enable_animation -%}
+<script>
+(function(){
+  'use strict';
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var section = document.getElementById('shopify-section-tl-{{ section.id }}');
+  if(!section) return;
+  var items = section.querySelectorAll('.tl-item--anim');
+  if(!items.length) return;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        e.target.classList.add('tl-item--visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -5% 0px' });
+  items.forEach(function(el){ io.observe(el); });
+  document.addEventListener('shopify:block:select', function(e){
+    if(e.target && e.target.classList.contains('tl-item--anim')){
+      e.target.classList.add('tl-item--visible');
+    }
+  });
+})();
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Timeline — Fashion",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:sections.all.section_width.label",
+      "default": "fluid_container",
+      "options": [
+        { "value": "container",       "label": "t:sections.all.section_width.container.label" },
+        { "value": "fluid_container", "label": "t:sections.all.section_width.fluid_container.label" },
+        { "value": "stretch_width",   "label": "t:sections.all.section_width.stretch_width.label" },
+        { "value": "full_width",      "label": "t:sections.all.section_width.full_width.label" }
+      ]
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.color_scheme.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Section Header"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow Text",
+      "default": "Our Heritage"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:sections.all.section_header.heading.label",
+      "default": "A Journey Through Craft & Tradition"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "t:sections.all.section_header.description.label",
+      "default": "<p>Every piece we create carries the soul of a timeless tradition.</p>"
+    },
+    {
+      "type": "select",
+      "id": "header_size",
+      "label": "t:sections.all.section_header.header_size.label",
+      "default": "medium",
+      "options": [
+        { "value": "small",  "label": "t:sections.all.section_header.header_size.small.label" },
+        { "value": "medium", "label": "t:sections.all.section_header.header_size.medium.label" },
+        { "value": "large",  "label": "t:sections.all.section_header.header_size.large.label" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "header_alignment",
+      "label": "t:sections.all.section_header.alignment.label",
+      "default": "center",
+      "options": [
+        { "value": "left",   "label": "t:sections.all.content_settings.content_alignment.left.label" },
+        { "value": "center", "label": "t:sections.all.content_settings.content_alignment.center.label" },
+        { "value": "right",  "label": "t:sections.all.content_settings.content_alignment.right.label" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Timeline Settings"
+    },
+    {
+      "type": "select",
+      "id": "timeline_layout",
+      "label": "Timeline Layout",
+      "default": "alternating",
+      "options": [
+        { "value": "alternating", "label": "Alternating (Recommended)" },
+        { "value": "image-left",  "label": "Image Always Left" },
+        { "value": "image-right", "label": "Image Always Right" }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "line_color",
+      "label": "Timeline Line Color",
+      "default": "#c8a97a"
+    },
+    {
+      "type": "color",
+      "id": "dot_color",
+      "label": "Timeline Dot Color",
+      "default": "#8b5e3c"
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "label": "Image Corner Radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "default": 4,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "item_spacing",
+      "label": "Spacing Between Items (Desktop)",
+      "min": 40,
+      "max": 160,
+      "step": 8,
+      "default": 96,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "item_spacing_mobile",
+      "label": "Spacing Between Items (Mobile)",
+      "min": 32,
+      "max": 80,
+      "step": 4,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_animation",
+      "label": "Enable Scroll Animation",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.section_padding.label"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:sections.all.section_padding.top.label",
+      "default": 80,
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:sections.all.section_padding.bottom.label",
+      "default": 80,
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px"
+    },
+    {
+      "type": "checkbox",
+      "id": "reset_spacing",
+      "label": "t:sections.all.section_padding.reset_spacing.label",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Timeline Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "date",
+          "label": "Year / Date",
+          "default": "2018"
+        },
+        {
+          "type": "text",
+          "id": "eyebrow",
+          "label": "Eyebrow / Category Text",
+          "default": "The Beginning"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Born From a Weaver's Dream"
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "Description",
+          "default": "<p>Rooted in the heritage of hand-woven silks and age-old embroidery, our first collection was an ode to the artisans of Rajasthan.</p>"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "select",
+          "id": "image_ratio",
+          "label": "Image Aspect Ratio",
+          "default": "portrait",
+          "options": [
+            { "value": "adapt",    "label": "Adapt to Image" },
+            { "value": "tall",     "label": "Tall (2:3)" },
+            { "value": "portrait", "label": "Portrait (3:4)" },
+            { "value": "square",   "label": "Square (1:1)" },
+            { "value": "landscape","label": "Landscape (4:3)" },
+            { "value": "wide",     "label": "Wide (16:9)" }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button Label"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button Link"
+        },
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon (Emoji)",
+          "info": "Optional. E.g. 🌸 🪡 ✨ 🪷"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_decor",
+          "label": "Show Decorative Petal Element",
+          "default": true
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Timeline — Fashion",
+      "blocks": [
+        {
+          "type": "item",
+          "settings": {
+            "date": "2018",
+            "eyebrow": "The Beginning",
+            "heading": "Born From a Weaver's Dream",
+            "description": "<p>Rooted in the heritage of hand-woven silks and age-old zari embroidery, our first collection was an ode to the master artisans of Rajasthan and Banaras.</p>",
+            "icon": "🌸",
+            "show_decor": true,
+            "image_ratio": "portrait"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "date": "2020",
+            "eyebrow": "The Craft",
+            "heading": "Threads of Tradition",
+            "description": "<p>We collaborated with over 200 artisan families, blending centuries-old hand-block printing with contemporary silhouettes for the modern Indian woman.</p>",
+            "icon": "🪡",
+            "show_decor": true,
+            "image_ratio": "portrait"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "date": "2022",
+            "eyebrow": "The Collection",
+            "heading": "Bridal Grandeur",
+            "description": "<p>Our signature bridal Lehenga collection celebrated the richness of Zardozi and mirror work, dressing brides across India and beyond in timeless elegance.</p>",
+            "icon": "✨",
+            "show_decor": true,
+            "image_ratio": "portrait"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "date": "2024",
+            "eyebrow": "The Vision",
+            "heading": "A New Chapter of Elegance",
+            "description": "<p>Today, we bring the grace of India's finest textile traditions to women worldwide — each Ghaghra Choli a wearable piece of living heritage.</p>",
+            "icon": "🪷",
+            "show_decor": true,
+            "image_ratio": "portrait"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

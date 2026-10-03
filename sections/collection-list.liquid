@@ -36,16 +36,36 @@
   assign image_custom_width = section_st.image_custom_width
   assign scroll_animation = settings.scroll_animation
 -%}
+{%- liquid
+  assign image_ratio = section_st.image_ratio
+  assign custom_ratio = section_st.custom_ratio
+  assign collection_ratio = ''
+  if image_ratio == 'square'
+    assign collection_ratio = '1/1'
+  elsif image_ratio == 'portrait'
+    assign collection_ratio = '3/4'
+  elsif image_ratio == 'landscape'
+    assign collection_ratio = '4/3'
+  elsif image_ratio == 'custom'
+    if custom_ratio != blank
+      assign collection_ratio = custom_ratio | replace: ':', '/'
+    else
+      assign collection_ratio = '3/4'
+    endif
+  endif
+-%}
 {%- capture style -%}
   --section-pt: {{ section_st.padding_top }}; --section-pb: {{ section_st.padding_bottom }};
+  {% unless collection_ratio == '' %}--collection-image-ratio: {{ collection_ratio }};{% endunless %}
 {%- endcapture -%}
 {%- capture col_style -%}
 --col-desktop: {{ items_per_row }};--col-number:{{ items_per_row_mobile }};{% if items_per_row > 3 %}--col-tablet: 3;{% else %}--col-tablet: {{ items_per_row }};{% endif %}
 {% if column_gap < 15 %}--col-gap: {{ column_gap }}px;{% else %}--col-gap: 15px;--col-gap-desktop: {{  column_gap }}px;{% endif %}--repeat: {{ section.blocks.size }}; --col-mobile: {{ items_per_row_mobile }}
 {%- endcapture -%}
-{% if collection_information_position == 'below_image' and image_custom_width and rounded_image %}
+{% comment %} Rounded image + custom width: only force 1:1 ratio when user hasn't picked an explicit ratio (adapt) {% endcomment %}
+{% if collection_information_position == 'below_image' and image_custom_width and rounded_image and image_ratio == 'adapt' %}
   {%- style -%}
-    .collection-item__media--ratio {
+    #shopify-section-{{ section.id }} .collection-item__media--ratio {
       --aspect-ratio: 1 !important;
     }
   {%- endstyle -%}
