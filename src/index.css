@@ -4,35 +4,39 @@
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900 font-sans antialiased selection:bg-brand-500 selection:text-white;
-    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    @apply bg-[#faf8f5] text-slate-800 font-sans antialiased selection:bg-vastriya-900 selection:text-gold-200;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  h1, h2, h3, .font-serif-vastriya {
+    font-family: 'Cormorant Garamond', Georgia, serif;
   }
 }
 
 .glass-card {
-  @apply bg-white/90 backdrop-blur-md border border-slate-100 shadow-xl shadow-slate-200/50 rounded-2xl;
+  @apply bg-white/95 backdrop-blur-md border border-amber-950/10 shadow-sm rounded-2xl;
 }
 
 .glass-card-hover {
-  @apply transition-all duration-300 hover:shadow-2xl hover:shadow-slate-300/60 hover:-translate-y-0.5;
+  @apply transition-all duration-300 hover:shadow-lg hover:shadow-vastriya-900/5 hover:-translate-y-0.5;
 }
 
-/* Custom pulse indicator for current tracking stage */
-@keyframes pulse-ring {
+/* Custom subtle pulse indicator for current tracking stage */
+@keyframes pulse-ring-maroon {
   0% {
     transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.7);
+    box-shadow: 0 0 0 0 rgba(88, 28, 37, 0.4);
   }
   70% {
     transform: scale(1.05);
-    box-shadow: 0 0 0 10px rgba(2, 132, 199, 0);
+    box-shadow: 0 0 0 8px rgba(88, 28, 37, 0);
   }
   100% {
     transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(2, 132, 199, 0);
+    box-shadow: 0 0 0 0 rgba(88, 28, 37, 0);
   }
 }
 
 .pulse-badge {
-  animation: pulse-ring 2.2s infinite;
+  animation: pulse-ring-maroon 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }

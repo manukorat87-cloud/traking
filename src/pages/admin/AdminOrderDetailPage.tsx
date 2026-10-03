@@ -147,7 +147,7 @@ export const AdminOrderDetailPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Order & Customer Info */}
           <div className="space-y-6">
-            <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+            <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
               <div className="flex items-center space-x-2.5 text-slate-900 font-bold border-b border-slate-100 pb-3">
                 <Package className="h-5 w-5 text-brand-600" />
                 <span>ORDER INFORMATION</span>
@@ -164,7 +164,7 @@ export const AdminOrderDetailPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+            <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
               <div className="flex items-center space-x-2.5 text-slate-900 font-bold border-b border-slate-100 pb-3">
                 <User className="h-5 w-5 text-brand-600" />
                 <span>CUSTOMER INFORMATION</span>
@@ -184,7 +184,7 @@ export const AdminOrderDetailPage: React.FC = () => {
 
           {/* Delivery & Tracking Info */}
           <div className="space-y-6">
-            <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+            <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
               <div className="flex items-center space-x-2.5 text-slate-900 font-bold border-b border-slate-100 pb-3">
                 <MapPin className="h-5 w-5 text-brand-600" />
                 <span>DELIVERY INFORMATION</span>
@@ -195,7 +195,7 @@ export const AdminOrderDetailPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+            <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div className="flex items-center space-x-2.5 text-slate-900 font-bold">
                   <Truck className="h-5 w-5 text-brand-600" />

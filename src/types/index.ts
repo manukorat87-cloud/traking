@@ -1,28 +1,55 @@
 export interface TimelineStep {
+  id: string;
   status: string;
   title: string;
   location?: string;
   description: string;
   date: string;
   isoDate: string;
+  dayOffset: number;
+  iconName: 'package' | 'truck' | 'warehouse' | 'map-pin' | 'check';
   completed: boolean;
   current: boolean;
   upcoming: boolean;
 }
 
+export interface CustomerData {
+  name: string;
+  phone: string;
+  email: string;
+  address: {
+    line1: string;
+    city: string;
+    state: string;
+    pincode: string;
+  };
+}
+
+export interface ProductData {
+  name: string;
+  size: string;
+  quantity: number;
+  price: number;
+  image?: string;
+  category?: string;
+}
+
+export interface PaymentData {
+  status: string;
+  method: string;
+}
+
 export interface PublicOrderTracking {
+  orderNumber: string;
   orderId: string;
-  customerName: string;
-  address: string;
-  city: string;
-  state: string;
-  pin: string;
-  totalAmount: string;
   orderDate: string;
+  estimatedDelivery: string;
   currentStatus: string;
   currentStatusLabel: string;
   currentLocation: string;
-  estimatedDelivery: string;
+  customer: CustomerData;
+  product: ProductData;
+  payment: PaymentData;
   timeline: TimelineStep[];
 }
 
@@ -45,13 +72,7 @@ export interface OrderItem {
   currentStatus: string;
   currentStatusLabel: string;
   estimatedDelivery: string;
-  trackingDetails?: {
-    currentStatus: string;
-    currentStatusLabel: string;
-    currentLocation: string;
-    estimatedDelivery: string;
-    timeline: TimelineStep[];
-  };
+  trackingDetails?: PublicOrderTracking;
 }
 
 export interface DashboardMetrics {
@@ -74,3 +95,4 @@ export interface AppSettings {
   trackingEnabledGlobal: boolean;
   hubsConfig: { key: string; label: string }[];
 }
+

@@ -40,8 +40,11 @@ export function App() {
   return (
     <Router>
       <Routes>
-        {/* Public Customer Tracking Route */}
+        {/* Public Customer Tracking Routes */}
+        <Route path="/" element={<CustomerTrackingPage />} />
+        <Route path="/track" element={<CustomerTrackingPage />} />
         <Route path="/track/:trackingToken" element={<CustomerTrackingPage />} />
+        <Route path="/order/:trackingToken" element={<CustomerTrackingPage />} />
 
         {/* Admin Login Route */}
         <Route path="/admin/login" element={<AdminLoginPage />} />
@@ -80,8 +83,8 @@ export function App() {
           }
         />
 
-        {/* Default Fallback */}
-        <Route path="*" element={<Navigate to="/admin" replace />} />
+        {/* Default Fallback to Customer Tracking */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );

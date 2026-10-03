@@ -1,69 +1,48 @@
 import React from 'react';
-import { PackageCheck } from 'lucide-react';
+import { ShieldCheck, Sparkles } from 'lucide-react';
 
 interface TrackingHeaderProps {
-  brandName?: string;
-  brandLogo?: string;
-  orderId: string;
-  orderDate: string;
+  onResetSearch?: () => void;
 }
 
-export const TrackingHeader: React.FC<TrackingHeaderProps> = ({
-  brandName = 'Shopify Store',
-  brandLogo,
-  orderId,
-  orderDate,
-}) => {
-  const formattedDate = (() => {
-    try {
-      const d = new Date(orderDate);
-      return d.toLocaleString('en-IN', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true,
-      });
-    } catch (e) {
-      return orderDate;
-    }
-  })();
-
+export const TrackingHeader: React.FC<TrackingHeaderProps> = ({ onResetSearch }) => {
   return (
-    <header className="bg-white border-b border-slate-200/80 shadow-xs py-6 px-4 sm:px-6">
-      <div className="max-w-2xl mx-auto flex flex-col items-center text-center space-y-4">
-        {/* Brand Logo & Name */}
-        <div className="flex items-center space-x-2.5">
-          {brandLogo ? (
-            <img src={brandLogo} alt={brandName} className="h-8 w-auto max-w-[140px] object-contain" />
-          ) : (
-            <div className="h-10 w-10 bg-brand-600 text-white rounded-xl flex items-center justify-center shadow-md shadow-brand-500/20">
-              <PackageCheck className="h-6 w-6" />
+    <header className="bg-white/90 backdrop-blur-md border-b border-amber-950/10 sticky top-0 z-40 shadow-sm">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
+        {/* Desktop & Mobile Brand Logo */}
+        <div className="flex items-center space-x-3 cursor-pointer" onClick={onResetSearch}>
+          <div className="h-10 w-10 rounded-full bg-vastriya-900 border border-gold-500/40 flex items-center justify-center text-gold-400 shadow-md">
+            <span className="font-serif text-xl font-bold tracking-tighter">V</span>
+          </div>
+          <div>
+            <div className="flex items-center space-x-1.5">
+              <span className="font-serif text-xl sm:text-2xl font-bold tracking-wider text-vastriya-950 uppercase">
+                Vastriya
+              </span>
+              <Sparkles className="h-3.5 w-3.5 text-gold-500 hidden sm:inline-block" />
             </div>
-          )}
-          <span className="text-xl font-extrabold tracking-tight text-slate-900">{brandName}</span>
+            <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] font-semibold text-amber-900/60 block -mt-1">
+              Ethnic Wear
+            </span>
+          </div>
         </div>
 
-        {/* Subtitle */}
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Track Your Order</h1>
-          <p className="text-xs font-medium text-slate-500 mt-1 uppercase tracking-wider">
-            Real-time order progress
-          </p>
-        </div>
+        {/* Navigation Categories - Desktop Only */}
+        <nav className="hidden md:flex items-center space-x-6 text-xs uppercase tracking-widest font-medium text-slate-600">
+          <span className="hover:text-vastriya-900 transition-colors cursor-pointer">Ghaghra Choli</span>
+          <span className="text-amber-300">•</span>
+          <span className="hover:text-vastriya-900 transition-colors cursor-pointer">Lehenga</span>
+          <span className="text-amber-300">•</span>
+          <span className="hover:text-vastriya-900 transition-colors cursor-pointer">Saree</span>
+          <span className="text-amber-300">•</span>
+          <span className="hover:text-vastriya-900 transition-colors cursor-pointer">Kurti</span>
+        </nav>
 
-        {/* Order Identifier pill */}
-        <div className="inline-flex items-center space-x-4 bg-slate-100/80 px-4 py-2 rounded-2xl border border-slate-200 text-xs sm:text-sm font-medium text-slate-700">
-          <div>
-            <span className="text-slate-400 font-normal mr-1">Order:</span>
-            <span className="font-mono font-bold text-slate-900">#{orderId}</span>
-          </div>
-          <span className="text-slate-300">|</span>
-          <div>
-            <span className="text-slate-400 font-normal mr-1">Placed on:</span>
-            <span className="font-semibold text-slate-800">{formattedDate}</span>
-          </div>
+        {/* Secure Shopping Indicator - Desktop & Mobile */}
+        <div className="flex items-center space-x-1.5 bg-gold-50 border border-gold-200/80 px-3 py-1.5 rounded-full text-xs text-amber-900 font-medium">
+          <ShieldCheck className="h-4 w-4 text-gold-600 shrink-0" />
+          <span className="hidden sm:inline">100% Secure Shopping</span>
+          <span className="sm:hidden text-[11px] font-semibold">Secure</span>
         </div>
       </div>
     </header>

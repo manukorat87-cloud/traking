@@ -8,7 +8,7 @@ interface VerticalTimelineProps {
 
 export const VerticalTimeline: React.FC<VerticalTimelineProps> = ({ timeline }) => {
   return (
-    <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs">
+    <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm">
       <h3 className="text-lg font-bold text-slate-900 tracking-tight mb-6 flex items-center justify-between">
         <span>Delivery Progress</span>
         <span className="text-xs font-semibold px-3 py-1 bg-slate-100 text-slate-600 rounded-full">

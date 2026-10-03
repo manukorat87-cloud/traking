@@ -52,7 +52,7 @@ export const DashboardStats: React.FC<DashboardStatsProps> = ({ metrics }) => {
         return (
           <div
             key={idx}
-            className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition duration-200 flex flex-col justify-between"
+            className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between"
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">

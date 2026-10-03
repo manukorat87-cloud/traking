@@ -27,7 +27,7 @@ export const AddressSummary: React.FC<AddressSummaryProps> = ({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {/* Delivery Address */}
-      <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs flex flex-col justify-between">
+      <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm flex flex-col justify-between">
         <div className="space-y-3">
           <div className="flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-slate-500">
             <MapPin className="h-4 w-4 text-brand-600" />
@@ -50,7 +50,7 @@ export const AddressSummary: React.FC<AddressSummaryProps> = ({
       </div>
 
       {/* Order Total Summary */}
-      <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs flex flex-col justify-between">
+      <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm flex flex-col justify-between">
         <div className="space-y-3">
           <div className="flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-slate-500">
             <Tag className="h-4 w-4 text-brand-600" />
