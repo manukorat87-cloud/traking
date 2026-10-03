@@ -1,0 +1,105 @@
+{% comment %}
+  Renders a responsive image with srcset and sizes attributes.
+
+  Accepts:
+  - type: {String} Image type: 'product', 'banner', 'blog', 'other' (optional)
+  - image: {Object} Image object from Liquid (required)
+  - image_alt: {String} Alt text for the image (optional)
+  - class: {String} Additional CSS classes (optional)
+  - container: {String} Container type for width calculation (optional)
+  - colunm: {Number} Number of columns on desktop (optional)
+  - colunm_mobile: {Number} Number of columns on mobile (optional)
+  - padding: {Number} Column gap/padding (optional)
+  - custom_widths: {String} Comma-separated custom widths (optional)
+  - sizes: {String} Custom sizes attribute (optional)
+  - width: {Number} Fixed width (optional)
+  - height: {Number} Fixed height (optional)
+  - no_animate: {Boolean} Skip lazy loading animation (optional)
+
+  Usage:
+  {% render 'responsive-image', type: 'product', image: product.featured_image, image_alt: 'Product image' %}
+{% endcomment %}
+
+{%- liquid
+  assign image_alt = image_alt | default: image.alt | default: '' | escape
+  assign image_loading = 'lazy'
+  assign image_fetchpriority = 'low'
+  if no_animate == true
+    assign image_loading = 'eager'
+    assign image_fetchpriority = 'high'
+  endif
+-%}
+
+{%- if image != blank -%}
+  {%- liquid
+    assign widths_default = '165, 360, 535, 750, 940, 1100, 1500, 1780, 2000'
+    if custom_widths != blank
+      assign widths_default = custom_widths
+    endif
+
+    assign img_url = image | image_url: width: 1
+    assign img_width = image.width | default: 1920
+    assign img_height = image.height | default: img_width
+  -%}
+
+  {%- if sizes != blank -%}
+    {%- assign computed_sizes = sizes -%}
+  {%- else -%}
+    {%- capture computed_sizes -%}
+      {%- liquid
+        assign col = colunm | default: 1 | times: 1
+        assign col_mobile = colunm_mobile | default: 1 | times: 1
+        assign pad = padding | default: 0 | times: 1
+
+        case type
+          when 'product'
+            if col > 1
+              echo '(min-width: 1200px) calc((100vw - ' | append: pad | append: 'px * ' | append: col | append: ') / ' | append: col | append: '), '
+              echo '(min-width: 750px) calc(100vw / ' | append: col | append: '), '
+            endif
+            if col_mobile > 1
+              echo 'calc(100vw / ' | append: col_mobile | append: ')'
+            else
+              echo '100vw'
+            endif
+          when 'banner'
+            echo '100vw'
+          when 'blog'
+            if col > 1
+              echo '(min-width: 1200px) calc(100vw / ' | append: col | append: '), '
+              echo '(min-width: 750px) 50vw, '
+            endif
+            echo '100vw'
+          else
+            echo '100vw'
+        endcase
+      -%}
+    {%- endcapture -%}
+  {%- endif -%}
+
+  {%- capture srcset -%}
+    {%- assign widths_array = widths_default | split: ',' -%}
+    {%- for w in widths_array -%}
+      {%- assign w_strip = w | strip | times: 1 -%}
+      {%- if w_strip <= img_width -%}
+        {{ image | image_url: width: w_strip }} {{ w_strip }}w
+        {%- unless forloop.last -%},{%- endunless -%}
+      {%- endif -%}
+    {%- endfor -%}
+    {%- if img_width > 0 -%}
+      , {{ image | image_url: width: img_width }} {{ img_width }}w
+    {%- endif -%}
+  {%- endcapture -%}
+
+  <img
+    srcset="{{ srcset | strip }}"
+    src="{{ image | image_url: width: 1500 }}"
+    sizes="{{ computed_sizes | strip }}"
+    alt="{{ image_alt }}"
+    loading="{{ image_loading }}"
+    fetchpriority="{{ image_fetchpriority }}"
+    {% if width %}width="{{ width }}"{% else %}width="{{ img_width }}"{% endif %}
+    {% if height %}height="{{ height }}"{% else %}height="{{ img_height }}"{% endif %}
+    class="bls__responsive-image {{ class }}"
+  >
+{%- endif -%}

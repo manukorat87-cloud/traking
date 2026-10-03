@@ -1,0 +1,30 @@
+# =============================================================================
+# .shopifyignore — Exclude ALL JSON files from Push / Pull / Dev operations
+# =============================================================================
+# This file ensures that only code files (.liquid, .css, .js, .scss, etc.)
+# are synced between the local theme and Shopify.
+#
+# JSON files (templates, sections, config, locales, and any others) are
+# NEVER pushed or pulled, keeping the live store's data intact.
+# =============================================================================
+
+# ── Global: ignore every .json file in the entire theme ──────────────────────
+*.json
+
+# ── Explicit per-directory rules (defense-in-depth) ──────────────────────────
+
+# Template JSON files (Online Store 2.0 templates)
+templates/*.json
+templates/**/*.json
+
+# Section group JSON files
+sections/*.json
+sections/**/*.json
+
+# Theme config / settings
+config/*.json
+config/**/*.json
+
+# Locale / translation files
+locales/*.json
+locales/**/*.json
