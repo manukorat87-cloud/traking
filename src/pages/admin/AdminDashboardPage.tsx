@@ -68,7 +68,7 @@ export const AdminDashboardPage: React.FC = () => {
             </p>
           </div>
           <div className="flex items-center space-x-3">
-            <Button variant="outline" size="sm" onClick={loadData} isLoading={isLoading}>
+            <Button variant="outline" size="sm" onClick={() => loadData()} isLoading={isLoading}>
               <RefreshCw className="h-4 w-4" />
               <span>Refresh</span>
             </Button>
