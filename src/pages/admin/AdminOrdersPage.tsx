@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { OrdersTable } from '../../components/admin/OrdersTable';
 import { OrderDetailModal } from '../../components/admin/OrderDetailModal';
-import { fetchOrders, generateTrackingLink } from '../../services/api';
+import { fetchOrders, generateTrackingLink, sendTrackingEmail } from '../../services/api';
 import { OrderItem } from '../../types';
 
 export const AdminOrdersPage: React.FC = () => {
@@ -59,6 +59,15 @@ export const AdminOrdersPage: React.FC = () => {
     }
   };
 
+  const handleSendEmail = async (order: OrderItem) => {
+    try {
+      await sendTrackingEmail(order.id);
+      alert('Email sent successfully!');
+    } catch (err) {
+      alert('Failed to send tracking email');
+    }
+  };
+
   return (
     <AdminLayout>
       <div className="space-y-6">
@@ -80,6 +89,7 @@ export const AdminOrdersPage: React.FC = () => {
             setIsModalOpen(true);
           }}
           onGenerateTracking={handleGenerateTracking}
+          onSendEmail={handleSendEmail}
           isLoading={isLoading}
         />
       </div>

@@ -9,7 +9,8 @@ import {
   ChevronLeft, 
   ChevronRight,
   Sparkles,
-  Filter
+  Filter,
+  Mail
 } from 'lucide-react';
 import { OrderItem } from '../../types';
 import { Button } from '../ui/Button';
@@ -28,6 +29,7 @@ interface OrdersTableProps {
   onStatusFilterChange: (status: string) => void;
   onViewOrder: (order: OrderItem) => void;
   onGenerateTracking: (order: OrderItem) => void;
+  onSendEmail: (order: OrderItem) => void;
   isLoading?: boolean;
 }
 
@@ -39,6 +41,7 @@ export const OrdersTable: React.FC<OrdersTableProps> = ({
   onStatusFilterChange,
   onViewOrder,
   onGenerateTracking,
+  onSendEmail,
   isLoading = false,
 }) => {
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -254,14 +257,25 @@ export const OrdersTable: React.FC<OrdersTableProps> = ({
                           <span>Generate</span>
                         </Button>
                       ) : (
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          onClick={() => onViewOrder(order)}
-                        >
-                          <Link2 className="h-3.5 w-3.5" />
-                          <span>Manage</span>
-                        </Button>
+                        <>
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={() => onSendEmail(order)}
+                            title="Send Tracking Email"
+                          >
+                            <Mail className="h-3.5 w-3.5" />
+                            <span>Send Mail</span>
+                          </Button>
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={() => onViewOrder(order)}
+                          >
+                            <Link2 className="h-3.5 w-3.5" />
+                            <span>Manage</span>
+                          </Button>
+                        </>
                       )}
                     </div>
                   </td>

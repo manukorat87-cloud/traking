@@ -110,6 +110,18 @@ export async function generateTrackingLink(id: string): Promise<{ tracking_token
   return data.data;
 }
 
+export async function sendTrackingEmail(id: string): Promise<boolean> {
+  const res = await fetch(`${API_BASE}/admin/orders/${id}/send-email`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+  });
+  const data = await res.json();
+  if (!res.ok || !data.success) {
+    throw new Error(data.message || 'Failed to send tracking email.');
+  }
+  return data.success;
+}
+
 export async function toggleTracking(id: string, enabled: boolean): Promise<{ tracking_enabled: boolean }> {
   const res = await fetch(`${API_BASE}/admin/orders/${id}/tracking`, {
     method: 'PATCH',

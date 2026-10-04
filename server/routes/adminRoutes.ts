@@ -15,5 +15,6 @@ router.get('/orders', adminController.getOrdersList);
 router.get('/orders/:id', adminController.getOrderDetails);
 router.post('/orders/:id/tracking', adminController.generateTrackingLink);
 router.patch('/orders/:id/tracking', adminController.toggleTracking);
+router.post('/orders/:id/send-email', adminController.sendTrackingEmailRoute);
 
 export default router;

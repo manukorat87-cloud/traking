@@ -9,13 +9,14 @@ import {
   Package, 
   User, 
   MapPin, 
-  Truck
+  Truck,
+  Mail
 } from 'lucide-react';
 import { OrderItem } from '../../types';
 import { Modal } from '../ui/Modal';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
-import { generateTrackingLink, toggleTracking } from '../../services/api';
+import { generateTrackingLink, toggleTracking, sendTrackingEmail } from '../../services/api';
 
 interface OrderDetailModalProps {
   order: OrderItem | null;
@@ -33,6 +34,7 @@ export const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
   const [copied, setCopied] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isToggling, setIsToggling] = useState(false);
+  const [isSendingMail, setIsSendingMail] = useState(false);
 
   if (!order) return null;
 
@@ -68,6 +70,18 @@ export const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
       alert('Failed to update tracking state');
     } finally {
       setIsToggling(false);
+    }
+  };
+
+  const handleSendEmail = async () => {
+    setIsSendingMail(true);
+    try {
+      await sendTrackingEmail(order.id);
+      alert('Email sent successfully!');
+    } catch (err) {
+      alert('Failed to send tracking email');
+    } finally {
+      setIsSendingMail(false);
     }
   };
 
@@ -177,6 +191,12 @@ export const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
                       <span>Open</span>
                     </Button>
                   </a>
+                </div>
+                <div className="pt-2 flex justify-end">
+                  <Button variant="secondary" size="sm" onClick={handleSendEmail} isLoading={isSendingMail}>
+                    <Mail className="h-3.5 w-3.5" />
+                    <span>Send Tracking Email to Customer</span>
+                  </Button>
                 </div>
               </div>
 

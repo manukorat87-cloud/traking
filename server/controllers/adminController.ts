@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import * as orderService from '../services/orderService.js';
+import * as emailService from '../services/emailService.js';
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@example.com';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
@@ -137,6 +138,34 @@ export async function toggleTracking(req: Request, res: Response, next: NextFunc
     return res.json({
       success: true,
       data: updated,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function sendTrackingEmailRoute(req: Request, res: Response, next: NextFunction) {
+  try {
+    const { id } = req.params;
+    const trackingData = await orderService.generateOrGetTrackingToken(id);
+
+    if (!trackingData || !trackingData.tracking_token) {
+      return res.status(400).json({ success: false, message: 'Tracking link not generated yet.' });
+    }
+
+    const appUrl = process.env.APP_URL || 'http://localhost:3000';
+    const trackingUrl = `${appUrl}/track/${trackingData.tracking_token}`;
+
+    const order = await orderService.getOrderById(id);
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Order not found.' });
+    }
+
+    await emailService.sendTrackingEmail(order, trackingUrl);
+
+    return res.json({
+      success: true,
+      message: 'Email sent successfully.',
     });
   } catch (error) {
     next(error);

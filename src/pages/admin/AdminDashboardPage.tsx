@@ -5,7 +5,7 @@ import { AdminLayout } from '../../components/admin/AdminLayout';
 import { DashboardStats } from '../../components/admin/DashboardStats';
 import { OrdersTable } from '../../components/admin/OrdersTable';
 import { OrderDetailModal } from '../../components/admin/OrderDetailModal';
-import { fetchDashboardMetrics, fetchOrders, generateTrackingLink } from '../../services/api';
+import { fetchDashboardMetrics, fetchOrders, generateTrackingLink, sendTrackingEmail } from '../../services/api';
 import { DashboardMetrics, OrderItem } from '../../types';
 import { Button } from '../../components/ui/Button';
 
@@ -42,6 +42,15 @@ export const AdminDashboardPage: React.FC = () => {
       loadData();
     } catch (err) {
       alert('Failed to generate tracking link');
+    }
+  };
+
+  const handleSendEmail = async (order: OrderItem) => {
+    try {
+      await sendTrackingEmail(order.id);
+      alert('Email sent successfully!');
+    } catch (err) {
+      alert('Failed to send tracking email');
     }
   };
 
@@ -97,6 +106,7 @@ export const AdminDashboardPage: React.FC = () => {
               setIsModalOpen(true);
             }}
             onGenerateTracking={handleGenerateTracking}
+            onSendEmail={handleSendEmail}
             isLoading={isLoading}
           />
         </div>
