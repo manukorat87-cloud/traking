@@ -33,27 +33,47 @@ export async function getOrders(options: OrderQueryOptions) {
 
   // Text / multi-field regex search
   if (options.search && options.search.trim() !== '') {
-    const searchRegex = new RegExp(options.search.trim(), 'i');
+    const rawSearch = options.search.trim();
+    const searchVal = rawSearch.replace(/^#/, ''); // Remove # if they typed it
+    const searchRegex = new RegExp(searchVal, 'i');
     const searchConditions: any[] = [
       { first_name: searchRegex },
       { last_name: searchRegex },
       { email: searchRegex },
       { city: searchRegex },
       { tracking_token: searchRegex },
+      { order_id: searchRegex },
+      { id: searchRegex }
     ];
 
-    // Check if search query matches ObjectId format
-    if (ObjectId.isValid(options.search.trim())) {
+    // Check if search query matches full ObjectId format
+    if (ObjectId.isValid(searchVal)) {
       try {
-        searchConditions.push({ _id: new ObjectId(options.search.trim()) });
-      } catch (e) {
-        // ignore invalid objectId
-      }
+        searchConditions.push({ _id: new ObjectId(searchVal) });
+      } catch (e) {}
     }
-    
-    // Support order_id or id fields if present
-    searchConditions.push({ order_id: searchRegex });
-    searchConditions.push({ id: searchRegex });
+
+    // Support partial _id search (since frontend displays substring of _id)
+    // and full customer name search
+    searchConditions.push({
+      $expr: {
+        $regexMatch: {
+          input: { $toString: "$_id" },
+          regex: searchVal,
+          options: "i"
+        }
+      }
+    });
+
+    searchConditions.push({
+      $expr: {
+        $regexMatch: {
+          input: { $concat: [{ $ifNull: ["$first_name", ""] }, " ", { $ifNull: ["$last_name", ""] }] },
+          regex: searchVal,
+          options: "i"
+        }
+      }
+    });
 
     query.$or = searchConditions;
   }
