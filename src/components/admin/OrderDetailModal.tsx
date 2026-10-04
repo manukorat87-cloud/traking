@@ -94,7 +94,7 @@ export const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
             <Package className="h-4 w-4 text-brand-600" />
             <span>ORDER INFORMATION</span>
           </div>
-          <div className="grid grid-cols-3 gap-3 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
             <div>
               <span className="text-slate-500 block">Order ID</span>
               <span className="font-mono font-bold text-slate-900">{order.orderId}</span>
@@ -125,7 +125,7 @@ export const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
             <User className="h-4 w-4 text-brand-600" />
             <span>CUSTOMER INFORMATION</span>
           </div>
-          <div className="grid grid-cols-2 gap-3 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
             <div>
               <span className="text-slate-500 block">Full Name</span>
               <span className="font-medium text-slate-900">{order.customerName}</span>
@@ -174,33 +174,35 @@ export const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
 
               <div>
                 <span className="text-slate-500 block mb-1">Public Tracking Link</span>
-                <div className="flex items-center space-x-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <input
                     type="text"
                     readOnly
                     value={trackingUrl}
                     className="flex-1 bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 font-mono text-xs text-slate-700 select-all"
                   />
-                  <Button variant="outline" size="sm" onClick={handleCopy}>
-                    {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
-                    <span>{copied ? 'Copied' : 'Copy'}</span>
-                  </Button>
-                  <a href={trackingUrl} target="_blank" rel="noreferrer">
-                    <Button variant="primary" size="sm">
-                      <ExternalLink className="h-3.5 w-3.5" />
-                      <span>Open</span>
+                  <div className="flex items-center gap-2">
+                    <Button variant="outline" size="sm" onClick={handleCopy} className="flex-1 sm:flex-none justify-center">
+                      {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
+                      <span>{copied ? 'Copied' : 'Copy'}</span>
                     </Button>
-                  </a>
+                    <a href={trackingUrl} target="_blank" rel="noreferrer" className="flex-1 sm:flex-none flex">
+                      <Button variant="primary" size="sm" className="w-full justify-center">
+                        <ExternalLink className="h-3.5 w-3.5" />
+                        <span>Open</span>
+                      </Button>
+                    </a>
+                  </div>
                 </div>
-                <div className="pt-2 flex justify-end">
-                  <Button variant="secondary" size="sm" onClick={handleSendEmail} isLoading={isSendingMail}>
+                <div className="pt-3 sm:pt-2 flex flex-col sm:justify-end">
+                  <Button variant="secondary" size="sm" onClick={handleSendEmail} isLoading={isSendingMail} className="w-full sm:w-auto justify-center">
                     <Mail className="h-3.5 w-3.5" />
-                    <span>Send Tracking Email to Customer</span>
+                    <span className="whitespace-nowrap">Send Email to Customer</span>
                   </Button>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-2 pt-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                 <div>
                   <span className="text-slate-500 block">Current Status</span>
                   <span className="font-semibold text-brand-700">{order.currentStatusLabel}</span>
@@ -224,7 +226,7 @@ export const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
 
         {/* CONTROLS & ACTIONS */}
         {order.tracking_token && (
-          <div className="flex items-center justify-between pt-2">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2">
             {order.tracking_enabled ? (
               <Button
                 variant="danger"
@@ -247,7 +249,7 @@ export const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
               </Button>
             )}
 
-            <Button variant="outline" size="sm" onClick={onClose}>
+            <Button variant="outline" size="sm" onClick={onClose} className="w-full sm:w-auto justify-center">
               Close
             </Button>
           </div>
