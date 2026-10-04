@@ -23,8 +23,85 @@
 {%- capture style -%}
 --section-pt: {{ section_st.padding_top }};--section-pb: {{ section_st.padding_bottom }}; {%- if slide_height == 'custom' -%}
   --height: {{ section_st.mobile_height }}px;--height-desktop: {{ section_st.desktop_height }}px;
-  {% endif %}
+  {% endif %}--mobile-heading-size: {{ section_st.mobile_heading_size }}px;--mobile-text-size: {{ section_st.mobile_text_size }}px;--mobile-content-height: {{ section_st.mobile_content_height }}px;--mobile-content-position: {{ section_st.mobile_content_position }}%;
 {%- endcapture -%}
+<style>
+@media screen and (max-width: 991.98px) {
+  #{{ section.id }} .sec__content-heading {
+    font-size: var(--mobile-heading-size) !important;
+  }
+  #{{ section.id }} .sec__content-des {
+    font-size: var(--mobile-text-size) !important;
+  }
+  #{{ section.id }} .sec__inner:not(.mb-content-below) {
+    min-height: var(--mobile-content-height) !important;
+  }
+  #{{ section.id }} .sec__inner:not(.mb-content-below) .banner__media {
+    min-height: var(--mobile-content-height) !important;
+  }
+  #{{ section.id }} .banner__media :is(img, picture > img, video) {
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+  #{{ section.id }} .sec__inner:not(.text-below-mb):not(.mb-content-below) {
+    position: relative !important;
+    overflow: hidden;
+  }
+  #{{ section.id }} .sec__inner:not(.text-below-mb):not(.mb-content-below) .sec__content {
+    position: absolute !important;
+    top: var(--mobile-content-position) !important;
+    transform: translateY(calc(-1 * var(--mobile-content-position))) !important;
+    left: 0;
+    right: 0;
+  }
+  /* --- Below image layout --- */
+  #{{ section.id }} .sec__inner.mb-content-below {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+  #{{ section.id }} .sec__inner.mb-content-below::before {
+    display: none !important;
+  }
+  #{{ section.id }} .sec__inner.mb-content-below .banner__media {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    min-height: var(--height) !important;
+    height: auto !important;
+    flex-shrink: 0;
+  }
+  #{{ section.id }} .sec__inner.mb-content-below .banner__media :is(img, picture > img, video) {
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+  #{{ section.id }} .sec__inner.mb-content-below .sec__content {
+    position: relative !important;
+    top: auto !important;
+    transform: none !important;
+    left: auto !important;
+    right: auto !important;
+    width: 100% !important;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    z-index: 1;
+    min-height: var(--mobile-content-height) !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  #{{ section.id }} .sec__inner.mb-content-below .sec__content-inner {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+}
+</style>
 <div
   id="{{ section.id }}"
   class="section{% if section_st.padding_top < 30 %} pt-min{% endif %}{% if section_st.padding_bottom < 30 %} pb-min{% endif %} gradient slideshow {{ slide_effect }} color-{{ color_scheme }}{{ reset_spacing }}"
@@ -85,7 +162,7 @@
             %}
             <div {{ block.shopify_attributes }} class="swiper-slide color-{{ block_st.color_scheme }}">
               <div
-                class="sec__inner flex relative{% if section_st.content_below_image %} flex-column flex-md-row text-below-mb{% endif %}{% if slide_height == 'adapt' and image_mobile != blank %} ratio-mobile{% endif %} h-{{ slide_height }}"
+                class="sec__inner flex relative{% if section_st.content_below_image %} flex-column flex-md-row text-below-mb{% endif %}{% if section_st.mobile_content_layout == 'below_image' %} mb-content-below{% endif %}{% if slide_height == 'adapt' and image_mobile != blank %} ratio-mobile{% endif %} h-{{ slide_height }}"
                 style="--overlay-opacity: {{ block_st.overlay_opacity }}%;{% if slide_height == 'adapt' or  slide_height == 'full_screen' %}--aspect-ratio: {{ ratio_dk }};--aspect-ratio-mb: {{ ratio_mb }};{% endif %}"
               >
                 <div
@@ -559,6 +636,66 @@
       "type": "checkbox",
       "id": "content_below_image",
       "label": "t:sections.all.mobile_options.content_below_image.label"
+    },
+    {
+      "type": "header",
+      "content": "Mobile settings"
+    },
+    {
+      "type": "select",
+      "id": "mobile_content_layout",
+      "label": "Content position",
+      "default": "overlay",
+      "options": [
+        {
+          "value": "overlay",
+          "label": "Overlay on image"
+        },
+        {
+          "value": "below_image",
+          "label": "Below image"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "mobile_heading_size",
+      "label": "Mobile heading size",
+      "min": 20,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "mobile_text_size",
+      "label": "Mobile text size",
+      "min": 12,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "mobile_content_height",
+      "label": "Mobile content height",
+      "min": 250,
+      "max": 800,
+      "step": 10,
+      "unit": "px",
+      "default": 360
+    },
+    {
+      "type": "range",
+      "id": "mobile_content_position",
+      "label": "Mobile content position",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 50
     },
     {
       "type": "header",

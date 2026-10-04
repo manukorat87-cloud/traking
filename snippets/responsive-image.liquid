@@ -91,6 +91,38 @@
     {%- endif -%}
   {%- endcapture -%}
 
+  {%- if image_mobile != blank and image_mobile != image -%}
+    {%- assign img_width_mobile = image_mobile.width | default: 1920 -%}
+    {%- capture srcset_mobile -%}
+      {%- assign widths_array = widths_default | split: ',' -%}
+      {%- for w in widths_array -%}
+        {%- assign w_strip = w | strip | times: 1 -%}
+        {%- if w_strip <= img_width_mobile -%}
+          {{ image_mobile | image_url: width: w_strip }} {{ w_strip }}w
+          {%- unless forloop.last -%},{%- endunless -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- if img_width_mobile > 0 -%}
+        , {{ image_mobile | image_url: width: img_width_mobile }} {{ img_width_mobile }}w
+      {%- endif -%}
+    {%- endcapture -%}
+  {%- endif -%}
+
+  {%- if image_mobile != blank and image_mobile != image -%}
+  <picture class="bls__responsive-picture">
+    <source media="(max-width: 767px)" srcset="{{ srcset_mobile | strip }}" sizes="{{ computed_sizes | strip }}">
+    <source media="(min-width: 768px)" srcset="{{ srcset | strip }}" sizes="{{ computed_sizes | strip }}">
+    <img
+      src="{{ image | image_url: width: 1500 }}"
+      alt="{{ image_alt }}"
+      loading="{{ image_loading }}"
+      fetchpriority="{{ image_fetchpriority }}"
+      {% if width %}width="{{ width }}"{% else %}width="{{ img_width }}"{% endif %}
+      {% if height %}height="{{ height }}"{% else %}height="{{ img_height }}"{% endif %}
+      class="bls__responsive-image {{ class }}"
+    >
+  </picture>
+  {%- else -%}
   <img
     srcset="{{ srcset | strip }}"
     src="{{ image | image_url: width: 1500 }}"
@@ -102,4 +134,5 @@
     {% if height %}height="{{ height }}"{% else %}height="{{ img_height }}"{% endif %}
     class="bls__responsive-image {{ class }}"
   >
+  {%- endif -%}
 {%- endif -%}
