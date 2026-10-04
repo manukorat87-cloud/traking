@@ -15,13 +15,15 @@ export const AdminDashboardPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<OrderItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
 
-  const loadData = async () => {
+  const loadData = async (search = searchQuery, status = statusFilter) => {
     setIsLoading(true);
     try {
       const [m, o] = await Promise.all([
         fetchDashboardMetrics(),
-        fetchOrders({ page: 1, limit: 5 }),
+        fetchOrders({ page: 1, limit: 5, search, status }),
       ]);
       setMetrics(m);
       setRecentOrders(o.orders);
@@ -99,8 +101,14 @@ export const AdminDashboardPage: React.FC = () => {
             orders={recentOrders}
             pagination={{ page: 1, totalPages: 1, total: recentOrders.length }}
             onPageChange={() => {}}
-            onSearchChange={() => {}}
-            onStatusFilterChange={() => {}}
+            onSearchChange={(query) => {
+              setSearchQuery(query);
+              loadData(query, statusFilter);
+            }}
+            onStatusFilterChange={(status) => {
+              setStatusFilter(status);
+              loadData(searchQuery, status);
+            }}
             onViewOrder={(order) => {
               setSelectedOrder(order);
               setIsModalOpen(true);
