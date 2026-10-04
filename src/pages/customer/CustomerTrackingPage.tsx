@@ -19,8 +19,8 @@ export const CustomerTrackingPage: React.FC = () => {
   const { trackingToken } = useParams<{ trackingToken?: string }>();
   const navigate = useNavigate();
 
-  // Active order number state (defaults to token or VAS123456)
-  const currentOrderNum = trackingToken || 'VAS123456';
+  // Active order number state (defaults to empty)
+  const currentOrderNum = trackingToken || '';
 
   const [trackingData, setTrackingData] = useState<PublicOrderTracking | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -28,7 +28,12 @@ export const CustomerTrackingPage: React.FC = () => {
 
   const loadOrder = useCallback(async (orderNum: string) => {
     const cleanNum = orderNum.trim().toUpperCase();
-    if (!cleanNum) return;
+    if (!cleanNum) {
+      setTrackingData(null);
+      setIsLoading(false);
+      setErrorState(null);
+      return;
+    }
 
     setIsLoading(true);
     setErrorState(null);
@@ -66,11 +71,13 @@ export const CustomerTrackingPage: React.FC = () => {
 
   const handleSearchOrder = (newOrderNum: string) => {
     const clean = newOrderNum.trim().toUpperCase();
-    navigate(`/track/${encodeURIComponent(clean)}`);
+    if (clean) {
+      navigate(`/track/${encodeURIComponent(clean)}`);
+    }
   };
 
   const handleResetSearch = () => {
-    navigate('/track/VAS123456');
+    navigate('/');
   };
 
   const deliveryAddressFormatted = trackingData?.customer?.address
@@ -94,13 +101,23 @@ export const CustomerTrackingPage: React.FC = () => {
         {/* Loading Skeleton */}
         {isLoading ? (
           <TrackingSkeletonLoader />
-        ) : errorState || !trackingData ? (
-          /* Error / Empty State */
+        ) : errorState ? (
+          /* Error State */
           <TrackingNotFound
             searchedOrderNumber={currentOrderNum}
-            onTryAgain={() => loadOrder('VAS123456')}
+            onTryAgain={() => handleResetSearch()}
             message={errorState?.message}
           />
+        ) : !trackingData ? (
+          /* Initial Empty State */
+          <div className="py-20 text-center text-slate-500 animate-fade-in">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-vastriya-50 mb-4">
+              <svg className="w-8 h-8 text-vastriya-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <p className="text-lg">Please enter your tracking number above to see order details.</p>
+          </div>
         ) : (
           /* Successful Tracking View */
           <div className="space-y-8 animate-fade-in">
