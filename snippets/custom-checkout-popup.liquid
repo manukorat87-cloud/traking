@@ -1,4 +1,4 @@
-﻿<style>
+<style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
 
 /* ===== OVERLAY ===== */
@@ -520,6 +520,9 @@ select.checkout-input {
             <div class="checkout-input-group">
               <input type="email" name="email" id="co-email" class="checkout-input" placeholder="Email" required>
             </div>
+            <div class="checkout-input-group" style="margin-top: 10px;">
+              <input type="tel" name="phone" id="co-phone" class="checkout-input" placeholder="Phone number" required>
+            </div>
           </div>
 
           <!-- Delivery -->
@@ -721,8 +724,33 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Get form data
     const formData = new FormData(form);
-    const customerData = Object.fromEntries(formData.entries());
+    const rawCustomerData = Object.fromEntries(formData.entries());
     
+    // Sanitize customer data strings to prevent broken JSON in Make.com / MongoDB string substitution
+    const customerData = {};
+    for (const key in rawCustomerData) {
+      if (typeof rawCustomerData[key] === 'string') {
+        customerData[key] = rawCustomerData[key]
+          .replace(/"/g, "'")       // Replace double quotes with single quotes
+          .replace(/[\r\n]+/g, " ") // Replace newlines with spaces
+          .replace(/\\/g, "/")      // Replace backslashes
+          .trim();
+      } else {
+        customerData[key] = rawCustomerData[key];
+      }
+    }
+    
+    // Sanitize item details
+    const sanitizedItems = (window.currentCheckoutItems || []).map(item => {
+      const cleanItem = { ...item };
+      for (const key in cleanItem) {
+        if (typeof cleanItem[key] === 'string') {
+          cleanItem[key] = cleanItem[key].replace(/"/g, "'").replace(/[\r\n]+/g, " ");
+        }
+      }
+      return cleanItem;
+    });
+
     const totalAmountString = document.getElementById('checkout-total').innerText.replace(/[^\d.-]/g, '');
     const totalAmount = parseFloat(totalAmountString);
     const orderTime = new Date().toISOString();
@@ -733,8 +761,10 @@ document.addEventListener('DOMContentLoaded', function() {
     fetch(webhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      keepalive: true,
       body: JSON.stringify({ 
         customer: customerData, 
+        items: sanitizedItems,
         total: totalAmount,
         orderTime: orderTime
       })
@@ -856,6 +886,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function renderSummaryItems(items) {
+    window.currentCheckoutItems = items;
     const html = buildItemsHTML(items);
     const desktopContainer = document.getElementById('checkout-order-summary-items');
     if (desktopContainer) desktopContainer.innerHTML = html;
