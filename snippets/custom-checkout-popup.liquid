@@ -520,9 +520,6 @@ select.checkout-input {
             <div class="checkout-input-group">
               <input type="email" name="email" id="co-email" class="checkout-input" placeholder="Email" required>
             </div>
-            <div class="checkout-input-group" style="margin-top: 10px;">
-              <input type="tel" name="phone" id="co-phone" class="checkout-input" placeholder="Phone number" required>
-            </div>
           </div>
 
           <!-- Delivery -->
@@ -667,8 +664,22 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   
+  function resetSubmitButtons() {
+    const submitBtns = document.querySelectorAll('button[type="submit"][form="custom-checkout-form"], #custom-checkout-form button[type="submit"]');
+    submitBtns.forEach(btn => {
+      btn.innerText = 'Pay now';
+      btn.disabled = false;
+    });
+  }
+
+  // Restore button state when returning via browser back button (bfcache)
+  window.addEventListener('pageshow', function() {
+    resetSubmitButtons();
+  });
+
   // Expose function globally to open popup
   window.openCustomCheckout = function(isBuyItNow = false, productData = null) {
+    resetSubmitButtons();
     if (popup) {
       popup.classList.add('is-open');
       document.body.style.overflow = 'hidden';
@@ -717,10 +728,14 @@ document.addEventListener('DOMContentLoaded', function() {
   form.addEventListener('submit', function(e) {
     e.preventDefault();
     
-    const submitBtn = form.querySelector('button[type="submit"]');
-    const originalBtnText = submitBtn.innerText;
-    submitBtn.innerText = 'Processing...';
-    submitBtn.disabled = true;
+    const submitBtns = document.querySelectorAll('button[type="submit"][form="custom-checkout-form"], #custom-checkout-form button[type="submit"]');
+    submitBtns.forEach(btn => {
+      btn.innerText = 'Processing...';
+      btn.disabled = true;
+    });
+
+    // Safety timeout: reset buttons after 8 seconds if page navigation is delayed or cancelled
+    setTimeout(resetSubmitButtons, 8000);
     
     // Get form data
     const formData = new FormData(form);
@@ -850,8 +865,7 @@ document.addEventListener('DOMContentLoaded', function() {
     .catch(err => {
       console.error("Error submitting form: ", err);
       alert("There was an error processing your request. Please try again.");
-      submitBtn.innerText = originalBtnText;
-      submitBtn.disabled = false;
+      resetSubmitButtons();
     });
   });
 
